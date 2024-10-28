@@ -2,7 +2,7 @@ version: '3.8'
 services:
   vite-app:
     build:
-      context: .  # Use the current directory as the build context
-      dockerfile: Dockerfile  # Specify your Dockerfile name if different
+      context: .  
+      dockerfile: Dockerfile  
     ports:
-      - "6969:5173"  # Maps host port 6969 to container port 5173
+      - "6969:5173"  
