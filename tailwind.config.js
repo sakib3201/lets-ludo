@@ -1,4 +1,7 @@
-/** @type {import('tailwindcss').Config} */
+import browserslist from 'browserslist';
+import {browserslistToTargets} from 'lightningcss';
+import { formatPostcssSourceMap } from 'vite';
+
 export default {
   content: [
     "./index.html",
@@ -8,5 +11,14 @@ export default {
     extend: {},
   },
   plugins: [],
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      targets: browserslistToTargets(browserslist('>= 0.25%'))
+    }
+  },
+  build: {
+    cssMinify: 'lightningcss'
+  }
 }
 
