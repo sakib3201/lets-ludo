@@ -1,53 +1,82 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/gin-gonic/gin"
 )
 
-type NumberInput struct {
-	Number int `json:"number"` // JSON field "number"
+type LudoBoard struct {
+	UserNumber          int       `json:"userNumber"`
+	RandomNumber        int       `json:"randomNumber"`
+	UsersPiecesPosition [4][4]int `json:"usersPiecesPosition"`
 }
 
-func hello(writter http.ResponseWriter, route *http.Request) {
-	writter.Write([]byte("Hello World!"))
+type RandomNumberResponse struct {
+	RandomNumber int `json:"randomNumber"`
 }
-func getRandom(writter http.ResponseWriter, route *http.Request) {
+
+var globalResponse = LudoBoard{
+	UserNumber:   0,
+	RandomNumber: 0,
+	UsersPiecesPosition: [4][4]int{
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+	},
+}
+
+func getRandom(Context *gin.Context) {
 	min := 1
 	max := 6
 	rand.Seed(time.Now().UnixNano())
 	randomInt := rand.Intn(max-min+1) + min
-	writter.Write([]byte(strconv.Itoa(randomInt)))
+
+	response := RandomNumberResponse{
+		RandomNumber: randomInt,
+	}
+	globalResponse.RandomNumber = randomInt
+	Context.JSON(http.StatusOK, response)
 }
 
-func receiveNumber(w http.ResponseWriter, r *http.Request) {
-	var input NumberInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+func receivePieceNumber(Context *gin.Context) {
+	variable := Context.Param("variable")
+	pieceNumber := variable
+	if err := Context.ShouldBindJSON(&pieceNumber); err != nil {
+		Context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("Received number: %d\n", input.Number)
+
+	log.Printf("Received number: %d\n", pieceNumber)
+	user = globalResponse.UserNumber
+	diceNumber = globalResponse.RandomNumber
+	PiecePosition[4][4] := globalResponse.UsersPiecesPosition
+	piecePosition[user][variable] += diceNumber
+	response := LudoBoard {
+		UserNumber: (user+1)%4,
+		RandomNumber: diceNumber,
+		UsersPiecesPosition: ,
+	}
 	response := map[string]string{
 		"message": "Number received successfully!",
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	Context.JSON(http.StatusOK, response)
+
 }
 
 func main() {
-	route := chi.NewRouter()
-	route.Use(middleware.Logger)
-	route.Get("/hello", hello)
-	route.Get("/getRandom", getRandom)
-	route.Post("/receiveNumber", receiveNumber)
+	route := gin.Default()
+	route.Use(gin.Logger())
+
+	route.GET("/getRandom", getRandom)
+
+	route.POST("/receivePieceNumber/:variable", receivePieceNumber) // কত নাম্বার গুটি চালবি
 
 	log.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", route)
+	route.Run(":8080")
 }
