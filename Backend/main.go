@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -46,27 +47,23 @@ func getRandom(Context *gin.Context) {
 
 func receivePieceNumber(Context *gin.Context) {
 	variable := Context.Param("variable")
-	pieceNumber := variable
-	if err := Context.ShouldBindJSON(&pieceNumber); err != nil {
-		Context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	pieceNumber, err := strconv.Atoi(variable)
+	if err != nil {
+		fmt.Println("Error converting variable to int:", err)
+		pieceNumber = 0 // Or handle it however is appropriate for your app
 	}
 
 	log.Printf("Received number: %d\n", pieceNumber)
-	user = globalResponse.UserNumber
-	diceNumber = globalResponse.RandomNumber
-	PiecePosition[4][4] := globalResponse.UsersPiecesPosition
-	piecePosition[user][variable] += diceNumber
-	response := LudoBoard {
-		UserNumber: (user+1)%4,
-		RandomNumber: diceNumber,
-		UsersPiecesPosition: ,
-	}
-	response := map[string]string{
-		"message": "Number received successfully!",
+	globalResponse.UserNumber += 1
+	user := globalResponse.UserNumber - 1
+	diceNumber := globalResponse.RandomNumber
+	globalResponse.UsersPiecesPosition[user][pieceNumber] += diceNumber
+	response := LudoBoard{
+		UserNumber:          user,
+		RandomNumber:        diceNumber,
+		UsersPiecesPosition: globalResponse.UsersPiecesPosition,
 	}
 	Context.JSON(http.StatusOK, response)
-
 }
 
 func main() {
@@ -75,7 +72,7 @@ func main() {
 
 	route.GET("/getRandom", getRandom)
 
-	route.POST("/receivePieceNumber/:variable", receivePieceNumber) // কত নাম্বার গুটি চালবি
+	route.POST("/receivePieceNumber/:variable", receivePieceNumber)
 
 	log.Println("Starting server on :8080")
 	route.Run(":8080")
