@@ -9,6 +9,10 @@ export default defineConfig({
             input: [
                 'index.html',
                 'pages/game.html',
+                'style/tailwind.css',
+                'style/hompage.css',
+                'scripts/game_engine/board_generation.js',
+                'scripts/game_engine/game.js',
             ],
         },
     },

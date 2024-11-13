@@ -26,6 +26,10 @@ export function drawBoard(canvas) {
     const squareWidth = Math.min(canvas.width / 2, canvas.height / 2);
     const borderGap = squareWidth / 25;
     const laneGap = squareWidth / 4;
+    const miniBlockWidth = laneGap / 2;
+    
+    const centerX = (canvas.width + borderGap) /2;
+    const centerY = (canvas.height + borderGap) /2;
 
     // Top left rectangle
     ctx.fillStyle = 'red';
@@ -43,10 +47,59 @@ export function drawBoard(canvas) {
     ctx.fillStyle = 'yellow';
     ctx.fillRect(squareWidth + laneGap, squareWidth + laneGap - borderGap, squareWidth - laneGap - borderGap, squareWidth - laneGap);
 
-    // center rectangle
-    ctx.fillStyle = 'white';
+    // Center red triangle
     ctx.beginPath();
-    ctx.arc(squareWidth + borderGap / 2, squareWidth, laneGap / 2, 0, 2 * Math.PI);
-    ctx.fill();
+    ctx.moveTo(squareWidth + borderGap - laneGap, squareWidth + borderGap - laneGap);
+    ctx.lineTo(centerX , centerY);
+    ctx.lineTo(squareWidth + borderGap - laneGap , squareWidth - borderGap + laneGap);
     ctx.closePath();
+    ctx.fillStyle = 'red';
+    ctx.fill();
+
+    // Center green triangle
+    ctx.beginPath();
+    ctx.moveTo(squareWidth + borderGap - laneGap, squareWidth + borderGap - laneGap);
+    ctx.lineTo(centerX , centerY);
+    ctx.lineTo(squareWidth + laneGap , squareWidth + borderGap - laneGap);
+    ctx.closePath();
+    ctx.fillStyle = 'green';
+    ctx.fill();
+
+    // Center blue triangle
+    ctx.beginPath();
+    ctx.lineTo(squareWidth + borderGap - laneGap , squareWidth - borderGap + laneGap);
+    ctx.lineTo(centerX , centerY);
+    ctx.lineTo(squareWidth + laneGap , squareWidth - borderGap + laneGap);
+    ctx.closePath();
+    ctx.fillStyle = 'blue';
+    ctx.fill();
+
+    // Center yellow triangle
+    ctx.beginPath();
+    ctx.lineTo(squareWidth + laneGap , squareWidth - borderGap + laneGap);
+    ctx.lineTo(centerX, centerY);
+    ctx.lineTo(squareWidth + laneGap , squareWidth + borderGap - laneGap);
+    ctx.closePath();
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
+
+    // top and bottom lanes between red and green
+    for (let i = 0; i < 6; i++) {
+        ctx.fillStyle = 'silver';
+        ctx.strokeStyle = 'darkred';
+        ctx.lineWidth = 1;
+        ctx.fillRect(borderGap + miniBlockWidth * i , squareWidth - laneGap + borderGap, miniBlockWidth, miniBlockWidth);
+        ctx.strokeRect(borderGap + miniBlockWidth * i , squareWidth - laneGap + borderGap, miniBlockWidth, miniBlockWidth);
+        
+        ctx.strokeStyle = 'darkblue';
+        ctx.lineWidth = 1;
+        ctx.fillRect(borderGap + miniBlockWidth * i , squareWidth - laneGap + 2 * borderGap + 2 * miniBlockWidth, miniBlockWidth, miniBlockWidth);
+        ctx.strokeRect(borderGap + miniBlockWidth * i , squareWidth - laneGap + 2 * borderGap + 2 * miniBlockWidth, miniBlockWidth, miniBlockWidth);
+        
+        ctx.fillStyle = 'red';
+        ctx.strokeStyle = 'darkred';
+        ctx.lineWidth = 1;
+        ctx.fillRect(borderGap + miniBlockWidth * i , squareWidth - laneGap +1.5*borderGap + miniBlockWidth, miniBlockWidth, miniBlockWidth, miniBlockWidth);
+        ctx.strokeRect(borderGap + miniBlockWidth * i , squareWidth - laneGap +1.5*borderGap + miniBlockWidth, miniBlockWidth, miniBlockWidth, miniBlockWidth);
+    }
 }
