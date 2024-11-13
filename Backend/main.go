@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Remove this function after experimenting is over
 func receiveNumber(writer http.ResponseWriter, r *http.Request) {
 	var input_number int
@@ -28,64 +27,6 @@ func receiveNumber(writer http.ResponseWriter, r *http.Request) {
 
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(response)
-=======
-=======
->>>>>>> 2901888bfb5854409f69461839897aab3d4e54ba
-type LudoBoard struct {
-	UserNumber          int       `json:"userNumber"`
-	RandomNumber        int       `json:"randomNumber"`
-	UsersPiecesPosition [4][4]int `json:"usersPiecesPosition"`
-}
-
-type RandomNumberResponse struct {
-	RandomNumber int `json:"randomNumber"`
-}
-
-var globalResponse = LudoBoard{
-	UserNumber:   0,
-	RandomNumber: 0,
-	UsersPiecesPosition: [4][4]int{
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-	},
-}
-
-func getRandom(Context *gin.Context) {
-	min := 1
-	max := 6
-	rand.Seed(time.Now().UnixNano())
-	randomInt := rand.Intn(max-min+1) + min
-
-	response := RandomNumberResponse{
-		RandomNumber: randomInt,
-	}
-	globalResponse.RandomNumber = randomInt
-	Context.JSON(http.StatusOK, response)
-}
-
-func receivePieceNumber(Context *gin.Context) {
-	variable := Context.Param("variable")
-	pieceNumber, err := strconv.Atoi(variable)
-	if err != nil {
-		fmt.Println("Error converting variable to int:", err)
-		pieceNumber = 0 // Or handle it however is appropriate for your app
-<<<<<<< HEAD
-	}
-
-	log.Printf("Received number: %d\n", pieceNumber)
-	globalResponse.UserNumber += 1
-	user := globalResponse.UserNumber - 1
-	diceNumber := globalResponse.RandomNumber
-	globalResponse.UsersPiecesPosition[user][pieceNumber] += diceNumber
-	response := LudoBoard{
-		UserNumber:          user,
-		RandomNumber:        diceNumber,
-		UsersPiecesPosition: globalResponse.UsersPiecesPosition,
-	}
-	Context.JSON(http.StatusOK, response)
->>>>>>> 2901888bfb5854409f69461839897aab3d4e54ba
 }
 
 type ludoPiece struct {
@@ -167,8 +108,6 @@ func movePiece(w http.ResponseWriter, r *http.Request) {
 // - GET /game: handled by the gameState function
 // The server listens on port 8080.
 func main() {
-<<<<<<< HEAD
-<<<<<<< HEAD
 	route := chi.NewRouter()
 	route.Use(middleware.Logger)
 
@@ -178,20 +117,4 @@ func main() {
 	route.Get("/game", gameState)
 
 	http.ListenAndServe(":8080", route)
-=======
-=======
->>>>>>> 2901888bfb5854409f69461839897aab3d4e54ba
-	route := gin.Default()
-	route.Use(gin.Logger())
-
-	route.GET("/getRandom", getRandom)
-
-	route.POST("/receivePieceNumber/:variable", receivePieceNumber)
-
-	log.Println("Starting server on :8080")
-	route.Run(":8080")
-<<<<<<< HEAD
->>>>>>> 2901888bfb5854409f69461839897aab3d4e54ba
-=======
->>>>>>> 2901888bfb5854409f69461839897aab3d4e54ba
 }
